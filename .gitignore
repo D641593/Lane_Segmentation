@@ -1,0 +1,9 @@
+*.png
+*.jpg
+weights
+*.zip
+__pycache__
+example_submission
+ICME2022_Training_Dataset
+Public_Testing_Dataset_v2
+*.pth
