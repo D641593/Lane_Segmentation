@@ -22,15 +22,15 @@ class LaneDataset(Dataset):
         img = Image.open(os.path.join(self.img_dir, self.img_fnames[idx]))
         gt_src = cv2.imread(os.path.join(self.gt_dir,self.gt_fnames[idx]))
         h,w = gt_src.shape[:2]
-        gt = np.zeros((6,output_h,output_w),np.float32)
+        gt = np.zeros((output_h,output_w),np.float32)
         for i in range(output_h):
             for j in range(output_w):
-                gt[gt_src[round(i / output_h * h),round(j / output_w * w),0],i,j] = 1
+                gt[i,j] = gt_src[round(i / output_h * h),round(j / output_w * w),0]
 
         img_transforms = get_transforms()
         img = img_transforms(img)
         gt = torch.from_numpy(gt)
-        img,gt = get_data_augmentation(img,gt)
+        # img,gt = get_data_augmentation(img,gt)
         return img, gt
 
 def get_data_augmentation(img, gt):
