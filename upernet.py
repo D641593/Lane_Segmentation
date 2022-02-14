@@ -95,7 +95,7 @@ class UperNet(nn.Module):
         #    set_trainable([self.backbone], False)
 
     def forward(self, x):
-        input_size = (x.size()[2], x.size()[3])
+        input_size = (x.size()[-2], x.size()[-1])
 
         features = self.backbone(x)
         features[-1] = self.PPN(features[-1])
