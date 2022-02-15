@@ -7,7 +7,7 @@ from upernet import UperNet
 from Lanedataloader import LaneDataset
 from torch.utils.data import DataLoader
 
-def validation(model, test_loader, loss_fn, min_loss, test_step_num_each_batch):
+def validation(model, test_loader, loss_fn, min_loss, test_step_num_each_batch, save_flag):
     model.eval()
     current_loss = 0
     for img,gt in test_loader:
@@ -52,14 +52,14 @@ if '__main__' == __name__:
     save_each_epoch = 10
     val_each_epoch = 5
 
-    # train_data_dir = 'ICME2022_Training_Dataset/test_few/'
-    # train_gt_dir = 'ICME2022_Training_Dataset/test_few_gt/'
-    # test_data_dir = "ICME2022_Training_Dataset/test_few/"
-    # test_gt_dir = 'ICME2022_Training_Dataset/test_few_gt/'
-    train_data_dir = 'ICME2022_Training_Dataset/images/'
-    train_gt_dir = 'ICME2022_Training_Dataset/labels/class_labels/'
-    test_data_dir = "ICME2022_Training_Dataset/test_images/"
-    test_gt_dir = 'ICME2022_Training_Dataset/labels/class_test_labels/'
+    train_data_dir = 'ICME2022_Training_Dataset/test_few/'
+    train_gt_dir = 'ICME2022_Training_Dataset/test_few_gt/'
+    test_data_dir = "ICME2022_Training_Dataset/test_few/"
+    test_gt_dir = 'ICME2022_Training_Dataset/test_few_gt/'
+    # train_data_dir = 'ICME2022_Training_Dataset/images/'
+    # train_gt_dir = 'ICME2022_Training_Dataset/labels/class_labels/'
+    # test_data_dir = "ICME2022_Training_Dataset/test_images/"
+    # test_gt_dir = 'ICME2022_Training_Dataset/labels/class_test_labels/'
 
     dataset = LaneDataset(train_data_dir,train_gt_dir)
     loader = DataLoader(dataset, batch_size = batch_size, shuffle = True, num_workers = 4, pin_memory = True)
@@ -86,6 +86,8 @@ if '__main__' == __name__:
             gt = gt.to(device)
             gt = gt.long()
             output = model(img)
+            # if torch.isnan(img) or torch.isinf(output):
+            #     print('invalid input detected at iteration ', epoch)
             loss = loss_fn(output,gt)
 
             loss.backward()
@@ -97,8 +99,8 @@ if '__main__' == __name__:
         lr_scheduler.step()
 
         if (epoch+1) % val_each_epoch == 0:
-            save_flag, min_loss = validation(model,test_dataset,loss_fn, min_loss, test_step_num_each_batch)
-            print(save_flag, min_loss)
+            save_flag, min_loss = validation(model,test_dataset,loss_fn, min_loss, test_step_num_each_batch,save_flag)
+        print(save_flag, min_loss)
         if save_flag or (epoch+1) % save_each_epoch == 0:
             torch.save({
                 'epoch': epoch+1,
