@@ -91,6 +91,7 @@ if '__main__' == __name__:
 
             loss.backward()
             optimizer.step()
+            optimizer.zero_grad()
             current_loss = loss.detach().cpu().item() # only for show loss 
             print('epoch: {%d/%d}, step: {%d/%d}, loss : {%3.7f}, lr : {%3.7f}'%((epoch+1),epoches,iteration,step_num_each_batch, current_loss, optimizer.param_groups[0]['lr']))
             # logging.info('epoch: {%d/%d}, step: {%d/%d}, loss : {%3.7f}, lr : {%3.7f}'%((epoch+1),epoches,iteration,step_num_each_batch, current_loss, optimizer.param_groups[0]['lr']))
